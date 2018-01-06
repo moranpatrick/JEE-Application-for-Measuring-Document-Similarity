@@ -1,12 +1,15 @@
 package ie.gmit.sw;
 
+import java.io.File;
+
 public class Shingle {
 	private int hashCode;
 	private String docId;
 	
+	
 	public Shingle(int hashCode, String id){
 		this.hashCode = hashCode;
-		this.docId = docId;		
+		this.docId = id;		
 	}
 
 	public int getHashCode() {
@@ -23,7 +26,6 @@ public class Shingle {
 
 	public void setDocId(String docId) {
 		this.docId = docId;
-	}
-	
+	}	
 	
 }

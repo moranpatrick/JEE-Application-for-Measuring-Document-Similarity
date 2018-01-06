@@ -146,7 +146,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<font color=\"0000ff\">");	
 		
 		// Divide the document into shingles
-		shingleWorker= new ShingleWorker(part, taskNumber);
+		shingleWorker = new ShingleWorker(part, taskNumber);
 		//Get a list of shingles from the process shingle method in the shingleWorker Class
 		listShingles = shingleWorker.processShingle();
 		

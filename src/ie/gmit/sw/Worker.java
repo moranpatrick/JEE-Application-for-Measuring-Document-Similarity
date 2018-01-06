@@ -19,10 +19,11 @@ public class Worker implements Runnable {
 		while(true){
 			task = inQ.poll();
 			
-			if(task != null){
+			if(task != null){			
+				//Save Document To Database
 				
-				//Save To Database
-							
+				
+				//Get Document from database
 			}
 			
 		}

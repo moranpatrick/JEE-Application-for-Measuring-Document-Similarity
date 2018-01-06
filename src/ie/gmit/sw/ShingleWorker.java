@@ -1,6 +1,8 @@
 package ie.gmit.sw;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,16 +24,16 @@ public class ShingleWorker {
 		this.part = part;
 		this.docId = docId;		
 	}
-	
-	public List processShingle() throws IOException{
+		
+	public List<Shingle> processShingle() throws IOException{
 		int counter = 0; 
-		/*Down in thre while loop */
+		
+		/*Down in there while loop */
 		BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
+
 		StringBuilder sb = new StringBuilder();
 		while ((line = br.readLine()) != null) {
-			//Break each line up into shingles and do something. The servlet really should act as a
-			//contoller and dispatch this task to something else... Divide and conquer...! I've been
-			//telling you all this since 2nd year...!
+			
 			
 			//Ignores commas, periods, spaces and other punctuation
 			words = line.split("\\W+");
