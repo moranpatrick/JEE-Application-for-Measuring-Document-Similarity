@@ -5,6 +5,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class ServicePollHandler extends HttpServlet {
+	
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 	}

@@ -1,6 +1,11 @@
 package ie.gmit.sw;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -21,8 +26,21 @@ public class ServiceHandler extends HttpServlet {
 	 */
 	private String environmentalVariable = null; //Demo purposes only. Rename this variable to something more appropriate
 	private static long jobNumber = 0;
+	
+	private BlockingQueue<Task> inQ = new ArrayBlockingQueue<Task>(10);
+	private BlockingQueue<Task> outQ = new ArrayBlockingQueue<Task>(10);
+	private Worker worker;
+	private Task task = null;
+	private ShingleWorker shingleWorker;
+	private List<Shingle> listShingles = new ArrayList<Shingle>();
+	private Document document;
 
-
+	public ServiceHandler(){
+		super();
+		worker= new Worker(inQ, outQ);
+		new Thread(worker).start();	
+	}
+	
 	/* This method is only called once, when the servlet is first started (like a constructor). 
 	 * It's the Template Patten in action! Any application-wide variables should be initialised 
 	 * here. Note that if you set the xml element <load-on-startup>1</load-on-startup>, this
@@ -33,7 +51,7 @@ public class ServiceHandler extends HttpServlet {
 		
 		//Reads the value from the <context-param> in web.xml. Any application scope variables 
 		//defined in the web.xml can be read in as follows:
-		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 
+		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 		
 	}
 
 
@@ -69,7 +87,7 @@ public class ServiceHandler extends HttpServlet {
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
 			jobNumber++;
-			//Add job to in-queue
+			
 		}else{
 			RequestDispatcher dispatcher = req.getRequestDispatcher("/poll");
 			dispatcher.forward(req,resp);
@@ -126,14 +144,25 @@ public class ServiceHandler extends HttpServlet {
 		 */
 		out.print("<h3>Uploaded Document</h3>");	
 		out.print("<font color=\"0000ff\">");	
-		BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
-		String line = null;
-		while ((line = br.readLine()) != null) {
-			//Break each line up into shingles and do something. The servlet really should act as a
-			//contoller and dispatch this task to something else... Divide and conquer...! I've been
-			//telling you all this since 2nd year...!
-			out.print(line);
+		
+		// Divide the document into shingles
+		shingleWorker= new ShingleWorker(part, taskNumber);
+		//Get a list of shingles from the process shingle method in the shingleWorker Class
+		listShingles = shingleWorker.processShingle();
+		
+		//Create a new document to be handled by the ShingleWorker Thread
+		document = new Document(listShingles, taskNumber, title);
+		
+		task = new Task(document);
+		
+		try {
+			//Add the Task To The In Queue
+			inQ.put(task);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+			
 		out.print("</font>");	
 	}
 
