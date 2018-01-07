@@ -39,18 +39,15 @@ public class ShingleWorker {
 		
 		/*Down in there while loop */
 		if(part != null){
-			System.out.println("PART");
 			br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 		}
 		else{
 			br = new BufferedReader(new FileReader(file));
-			System.out.println("DB File");
 		}
 
 		StringBuilder sb = new StringBuilder();
 		while ((line = br.readLine()) != null) {
-			
-			
+						
 			//Ignores commas, periods, spaces and other punctuation
 			words = line.split("\\W+");
 			

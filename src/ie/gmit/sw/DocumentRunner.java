@@ -14,18 +14,16 @@ import com.db4o.ta.TransparentPersistenceSupport;
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
 
-public class DocumentRunner {
+public class DocumentRunner implements Database {
 
 	private ObjectContainer db = null;
 	private List<Document> listDocuments = new ArrayList<Document>();
 	private ShingleWorker shingleWorker;
 	private List<Shingle> listShingles = new ArrayList<Shingle>();
-	private Document document;
+	private Document doc;
 	
 	
 	public DocumentRunner() throws FileNotFoundException, IOException {
-		// Initialise the Database with three text files
-		init();
 		
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
 		config.common().add(new TransparentActivationSupport()); //Real lazy. Saves all the config commented out below
@@ -37,33 +35,40 @@ public class DocumentRunner {
 	
 		//Open a local database. Use Db4o.openServer(config, server, port) for full client / server
 		db = Db4oEmbedded.openFile(config, "documents.data");
-			
-		addDocumentsToDatabase();
-		showAllDocuments();				
+		
+		
+		listDocuments = getDocuments();
+		
+		System.out.println("Number of Documents in DB: " + listDocuments.size());
+		if(listDocuments.size() == 0){
+			// Initialise the Database with three text files
+			init();
+		}
+		showAllDocuments();
+								
 	}
 		
 	private void init() throws FileNotFoundException, IOException{
-
+		System.out.println("IN INIT()");
 		int i = 0;
-		File dir = new File("textFiles/");
+		File dir = new File("C:/Users/Patrick/Documents/COLLEGE/ForthYear/AdvancedOO/MainProject-MeasureDocumentSimilarity/DocumentSimilarityProject/textFiles");
 		
+		// Loop around the directory where the 3 files are stored
 		for(File f : dir.listFiles()){
-			i++;
+			i++; //Give Each File a different DocId
 			shingleWorker = new ShingleWorker(f, "F"+i);
 			// Delegate some work to the Shingle Worker and get an array list of shingles
 			listShingles = shingleWorker.processShingle();
 			//create a new document
-			document = new Document(listShingles, "F"+i, f.getName());
+			doc = new Document(listShingles, "F"+i, f.getName());
 			//Add the document at an array list of documents
-			listDocuments.add(document);
+			listDocuments.add(doc);
 			
 		}
-		System.out.println(listDocuments.size());		
-
-				
+		addInitialFilesToDatabase();				
 	}
 	
-	private void addDocumentsToDatabase() {
+	private void addInitialFilesToDatabase() {
 		for (Document d: listDocuments){
 			db.store(d); 
 		}
@@ -71,7 +76,14 @@ public class DocumentRunner {
 		//db.rollback(); //Rolls back the transaction
 	}
 	
-	private void showAllDocuments(){
+	public void addDocumentsToDatabase(Document d) {
+		
+		db.store(d); 
+		db.commit(); //Commits the transaction
+		
+	}
+	
+	public void showAllDocuments(){
 		//An ObjectSet is a specialised List for storing results
 		ObjectSet<Document> documents = db.query(Document.class);
 		for (Document document : documents) {
@@ -83,8 +95,22 @@ public class DocumentRunner {
 		}
 	}
 	
+	public List<Document> getDocuments(){
+		//An ObjectSet is a specialised List for storing results
+		List<Document> temp = new ArrayList<Document>();
+		ObjectSet<Document> documents = db.query(Document.class);
+		System.out.println("In GetDocs: Size is: " + documents.size());
+		for (Document document : documents) {
+			//System.out.println("DocId: " + document.getDocId() + "\t ***Database ObjID: " + db.ext().getID(document) + "DOC Name: " + document.getName());
+			temp.add(document);
+			//Removing objects from the database is as easy as adding them
+			//db.delete(document);
+			db.commit();
+		}
+		return temp;
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		new DocumentRunner();
 	}
-
 }
