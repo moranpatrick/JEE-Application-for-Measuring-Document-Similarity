@@ -18,18 +18,34 @@ public class ShingleWorker {
 	private String[] words = null;
 	private String line = null;
 	
+	private File file;
+	private BufferedReader br = null;
+	
 	private List<Shingle> listShingles = new ArrayList<Shingle>();
 	
 	public ShingleWorker(Part part, String docId){
 		this.part = part;
 		this.docId = docId;		
 	}
+	
+	public ShingleWorker(File f, String docId){
+		this.file = f;
+		this.docId = docId;
+	}
 		
 	public List<Shingle> processShingle() throws IOException{
 		int counter = 0; 
 		
+		
 		/*Down in there while loop */
-		BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
+		if(part != null){
+			System.out.println("PART");
+			br = new BufferedReader(new InputStreamReader(part.getInputStream()));
+		}
+		else{
+			br = new BufferedReader(new FileReader(file));
+			System.out.println("DB File");
+		}
 
 		StringBuilder sb = new StringBuilder();
 		while ((line = br.readLine()) != null) {
@@ -43,7 +59,7 @@ public class ShingleWorker {
 				
 				sb.append(words[i]);
 				if(counter == 3){
-					System.out.println(sb.toString());
+					//System.out.println(sb.toString());
 					shingle = new Shingle(sb.toString().hashCode(), docId);
 					listShingles.add(shingle);
 					counter = 0;
