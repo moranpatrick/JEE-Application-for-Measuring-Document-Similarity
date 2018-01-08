@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Sets up a Global In and Out Queues so they can be accessed from both the service handlers.
+ * 
+ * @author Patrick Moran
+ */
 public class GlobalQueue {
 	private static BlockingQueue<Task> inQ;
 	private static BlockingQueue<List<Results>> outQ;	
@@ -33,14 +38,11 @@ public class GlobalQueue {
 		GlobalQueue.outQ = outQ;
 	}
 	
-	public static void addToInQueue(Task t){
-		
-		GlobalQueue.inQ.add(t);
-		
+	public static void addToInQueue(Task t){		
+		GlobalQueue.inQ.add(t);	
 	}
 	
-	public static void addToOutQueue(List<Results> r){
-		
+	public static void addToOutQueue(List<Results> r){		
 		GlobalQueue.outQ.add(r);		
 	}	
 }

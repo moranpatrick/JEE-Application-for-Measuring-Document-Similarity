@@ -1,22 +1,26 @@
 package ie.gmit.sw;
 
 import java.util.List;
-
+/**
+ * An Document Class which are stored in the database.
+ * 
+ * @author Patrick Moran
+ */
 public class Document {
-	private List shingles;
+	private List<Shingle> shingles;
 	private String docId;
 	private String name;
 	
-	public Document(List shingles, String docId, String name) {
+	public Document(List<Shingle> shingles, String docId, String name) {
 		super();
 		this.shingles = shingles;
 		this.docId = docId;
 		this.name = name;
 	}
-	public List getShingles() {
+	public List<Shingle> getShingles() {
 		return shingles;
 	}
-	public void setShingles(List shingles) {
+	public void setShingles(List<Shingle> shingles) {
 		this.shingles = shingles;
 	}
 	public String getDocId() {
@@ -30,8 +34,5 @@ public class Document {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	
-		
+	}	
 }

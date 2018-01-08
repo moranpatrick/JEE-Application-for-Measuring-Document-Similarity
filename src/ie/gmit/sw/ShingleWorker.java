@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Part;
-
+/**
+ * Creates a list of Shingles and Returns them
+ * 
+ * @author Patrick Moran
+ */
 public class ShingleWorker {
 	
 	private Part part;
@@ -17,22 +21,35 @@ public class ShingleWorker {
 	private Shingle shingle;
 	private String[] words = null;
 	private String line = null;
-	
 	private File file;
 	private BufferedReader br = null;
 	
 	private List<Shingle> listShingles = new ArrayList<Shingle>();
 	
+	/**
+	 * Constructor Called if its a Part from the ServiceHandler 
+	 * 
+	 */
 	public ShingleWorker(Part part, String docId){
 		this.part = part;
 		this.docId = docId;		
 	}
 	
+	/**
+	 * Constructor Called of its a File object from the DocumentRunner
+	 * 
+	 */
 	public ShingleWorker(File f, String docId){
 		this.file = f;
 		this.docId = docId;
 	}
 		
+	/**
+	 * Creates and returns shingles either to the ServiceHandler or the DocumentRunner class.
+	 * 
+	 * @return List<Shingle>
+	 * @throws IOException
+	 */
 	public List<Shingle> processShingle() throws IOException{
 		int counter = 0; 
 		
@@ -56,7 +73,6 @@ public class ShingleWorker {
 				
 				sb.append(words[i]);
 				if(counter == Global.getShingleSize()){
-					//System.out.println(sb.toString());
 					shingle = new Shingle(sb.toString().hashCode(), docId);
 					listShingles.add(shingle);
 					counter = 0;
@@ -67,7 +83,4 @@ public class ShingleWorker {
 		//Return ArrayList of Shingles	
 		return listShingles;
 	}
-	
-	
-	
 }

@@ -1,5 +1,9 @@
 package ie.gmit.sw;
-
+/**
+ * Used to store Results, created in the Worker and displayed in the ServicePollHandler.
+ * 
+ * @author Patrick Moran
+ */
 public class Results {
 	private String newDoc;
 	private String oldDoc;

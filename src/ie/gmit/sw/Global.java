@@ -1,5 +1,10 @@
 package ie.gmit.sw;
-
+/**
+ * Called from tge ServiceHandler, this class sets up variables from the web.xml. They are now Global
+ * and can be used anywhere in the applicatoion.
+ * 
+ * @author Patrick Moran
+ */
 public class Global {
 	
 	private static int blockingQueueSize;
@@ -29,7 +34,5 @@ public class Global {
 	public static void setMaxHashes(int maxHashes) {
 		Global.maxHashes = maxHashes;
 	}
-	
-	
 	
 }

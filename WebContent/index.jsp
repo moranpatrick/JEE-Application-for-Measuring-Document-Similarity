@@ -15,11 +15,11 @@
 					<b>Document Title :</b><br>
 					<input name="txtTitle" type="text" size="50"/>
 					<p/>
-					<input type="file" name="txtDocument"/>
-					<center><input type="submit" value="Compare Document"></center>
+					<input type="file" name="txtDocument" size="70" style="margin-left; 10px"/>
+					<br /><br />
+					<input type="submit" style="margin-top; 10px" value="Compare Document">
 				</fieldset>							
 			</form>	
-
 		</td>
 	</tr>
 </table>

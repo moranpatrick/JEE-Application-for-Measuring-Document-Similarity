@@ -1,7 +1,9 @@
 package ie.gmit.sw;
-
-import java.io.File;
-
+/**
+ * Used to Create a Shingle. Each Shingle has its own hash code and document id.
+ * 
+ * @author Patrick Moran
+ */
 public class Shingle {
 	private int hashCode;
 	private String docId;
@@ -26,6 +28,5 @@ public class Shingle {
 
 	public void setDocId(String docId) {
 		this.docId = docId;
-	}	
-	
+	}		
 }

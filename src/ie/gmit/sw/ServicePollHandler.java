@@ -5,9 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+/**
+ * ServicePollHandler Class is responsible for displaying the jaccard results back
+ * to the user. 
+ * 
+ * @author Patrick Moran
+ */
 
 public class ServicePollHandler extends HttpServlet {
 	
@@ -16,9 +22,16 @@ public class ServicePollHandler extends HttpServlet {
 	private BlockingQueue<List<Results>> outQ = new ArrayBlockingQueue<List<Results>>(100);
 	
 	public void init() throws ServletException {
-		ServletContext ctx = getServletContext();
+		
 	}
 
+	/** 
+	 * Handles HTTP GET requests. Receives a list of results from the 
+	 * out queue and displays them to the user.
+	 * 
+	 * @throws ServeletException 
+	 * @throws IOException
+	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html"); 
 		PrintWriter out = resp.getWriter(); 
@@ -31,40 +44,44 @@ public class ServicePollHandler extends HttpServlet {
 			counter++;
 		}
 		
-		listResults = checkQueue(title);
+		listResults = checkOutQueue(title);
+		
 		if(listResults != null)
 		{
-			System.out.println("im here guys");
-			out.printf("<html><head><title>A JEE Application for Measuring Document Similarity</title>");
-		    out.print("<div class='centered'><table>");
-		    out.printf("<h1 align=\"center\"><b>%s</b></h1>", title);
-		    out.print("<tr><th>Document title</th><th>Similarity</th></tr>");
+			/*out.printf("<html><head><title>A JEE Application for Measuring Document Similarity</title>");*/
+			out.println("<link rel='stylesheet' type='text/css' href='includes/basic.css' />");
+			out.print("</p>&nbsp;</p>");
+			out.print("<div class=\"animated bounceInDown\" style=\"font-size:32pt; font-family:arial; color:#990000; font-weight:bold\">Results Are In</div>");
+		    out.print("</p>&nbsp;</p>");
+			out.print("<div class='centered'><table style=\"border: 3px solid black\">");
+		    out.print("<tr><th>Uploaded File |</th><th> Files In Database |</th><th> Jaccard Similarity</th></tr>");
+		    
 		    for (int i = 0; i < listResults.size(); i++) {
-			out.print("<tr><td>");
-			out.print(listResults.get(i).getNewDoc());
-			out.print("</td><td>");
-			out.print(listResults.get(i).getOldDoc());
-			out.print("</td><td>");
-			out.printf("%.0f %%", Double.valueOf(listResults.get(i).getJaccardIndex()) * 100);
-			out.print("</td></tr>");
+				out.print("<tr><td>");
+				out.print(listResults.get(i).getNewDoc());
+				out.print("</td><td>");
+				out.print(listResults.get(i).getOldDoc());
+				out.print("</td><td>");
+				out.printf("%.0f %%", Double.valueOf(listResults.get(i).getJaccardIndex()) * 100);
+				out.print("</td></tr>");
 		    }
 		    out.println();
 		    out.print("</table></div>");
-		    // Home button
-		    out.printf("<p align=\"center\">"
+
+		    out.printf("<p align=\"left\">"
 			    + "<button onclick=\"window.location.href='index.jsp'\">Home</button>"
 			    + "</p>");
 		    out.print("</body></html>");
 		}
 		else{
+			// No Results - Refresh page in 5 seconds
 			out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");		
 			out.print("</head>");		
 			out.print("<body>");
 			out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
-			out.print("<H3>Document Title: " + title + "</H3>");
-			out.print("<b><font color=\"ff0000\">A total of " + counter + " polls have been made for this request.</font></b> ");
-			out.print("Place the final response here... a nice table (or graphic!) of the document similarity...");
-			
+			out.print("<H2>Document Title: " + title + "</H2>");
+			out.print("<h3>Processing...</h3>");
+		
 			out.print("<form name=\"frmRequestDetails\">");
 			out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + title + "\">");
 			out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
@@ -78,42 +95,42 @@ public class ServicePollHandler extends HttpServlet {
 			out.print("</script>");
 		}
 	}
-
+	
+	/**
+	 * Handles HTTP Post Requests.
+	 * 
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}
 	
-	private List<Results> checkQueue(String title){
+	/**
+	 * Polls the out queue for results.
+	 * 
+	 * @param title
+	 * @return List<Results>
+	 */
+	private List<Results> checkOutQueue(String title){
+		// List of Results to be sent back to the doGet()
 		List<Results> temp = new ArrayList<Results>();
-		boolean found = false;
 		
-		//keep searching till job is found in queue and retrieve job with result definition
-		
+		// Retrieve The OutQ
 		outQ = GlobalQueue.getOutQ();
-		//System.out.println("hfkkjhjkfdhjkhd"+temp.get(0).getNewDoc());
-		for(int i = 0;i < outQ.size();i++)
-		{
+		
+		// Loop Over The OutQ
+		for(int i = 0;i < outQ.size();i++){
 			temp = outQ.peek();
-			System.out.println("in while loop"+ temp.get(i).getNewDoc());
-			System.out.println("in while loop"+ title);
-			String tString = temp.get(i).getNewDoc();
 			
-			if(temp != null && tString.equals(title))
-			{
-				found = true;
-				temp = outQ.poll();
+			if(temp != null && temp.get(i).getNewDoc().equals(title)){				
+				//We have a match add the result to the queue
+				temp = outQ.poll();		
+			}
+			else{
+				temp = null;	
 			}
 		}
-		if(found == true)
-		{
-			System.out.println("im true");
-			return temp;
-		}
-		else
-		{
-			return temp = null;	
-		}
-	}
-	
-	
+		return temp;
+	}	
 }
