@@ -53,8 +53,7 @@ public class DocumentRunner implements Database{
 		if(listDocuments.size() == 0){
 			init();
 		}
-		showAllDocuments();
-								
+		showAllDocuments();							
 	}
 		
 	/**
@@ -128,7 +127,6 @@ public class DocumentRunner implements Database{
 		//An ObjectSet is a specialised List for storing results
 		List<Document> temp = new ArrayList<Document>();
 		ObjectSet<Document> documents = db.query(Document.class);
-		System.out.println("In GetDocs: Size is: " + documents.size());
 		for (Document document : documents) {
 			//System.out.println("DocId: " + document.getDocId() + "\t ***Database ObjID: " + db.ext().getID(document) + "DOC Name: " + document.getName());
 			temp.add(document);
