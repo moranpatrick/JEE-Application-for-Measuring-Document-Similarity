@@ -14,6 +14,5 @@ public class Task {
 
 	public void setDocument(Document document) {
 		this.document = document;
-	}
-		
+	}	
 }

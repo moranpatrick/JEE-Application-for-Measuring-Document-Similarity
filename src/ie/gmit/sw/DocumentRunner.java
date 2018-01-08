@@ -110,6 +110,11 @@ public class DocumentRunner implements Database {
 		return temp;
 	}
 	
+	public void closeDB()
+	{
+		db.close();
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		new DocumentRunner();
 	}

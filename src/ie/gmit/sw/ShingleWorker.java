@@ -36,12 +36,12 @@ public class ShingleWorker {
 	public List<Shingle> processShingle() throws IOException{
 		int counter = 0; 
 		
-		
-		/*Down in there while loop */
 		if(part != null){
+			//Use this buffered reader to create Shingles From The Users input
 			br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 		}
 		else{
+			// Create Shingles for initial File Setup File in DB40 Runner
 			br = new BufferedReader(new FileReader(file));
 		}
 
@@ -55,7 +55,7 @@ public class ShingleWorker {
 				counter++;
 				
 				sb.append(words[i]);
-				if(counter == 3){
+				if(counter == Global.getShingleSize()){
 					//System.out.println(sb.toString());
 					shingle = new Shingle(sb.toString().hashCode(), docId);
 					listShingles.add(shingle);
@@ -64,8 +64,7 @@ public class ShingleWorker {
 				}		
 			}	
 		}
-		
-		
+		//Return ArrayList of Shingles	
 		return listShingles;
 	}
 	

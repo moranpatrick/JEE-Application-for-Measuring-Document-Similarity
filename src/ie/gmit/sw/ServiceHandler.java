@@ -18,6 +18,8 @@ import javax.servlet.annotation.*;
                  maxFileSize=1024*1024*10,      // 10MB. The maximum size allowed for uploaded files, in bytes
                  maxRequestSize=1024*1024*50)   // 50MB. he maximum size allowed for a multipart/form-data request, in bytes.
 public class ServiceHandler extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
 	/* Declare any shared objects here. For example any of the following can be handled from 
 	 * this context by instantiating them at a servlet level:
 	 *   1) An Asynchronous Message Facade: declare the IN and OUT queues or MessageQueue
@@ -27,8 +29,8 @@ public class ServiceHandler extends HttpServlet {
 	private String environmentalVariable = null; //Demo purposes only. Rename this variable to something more appropriate
 	private static long jobNumber = 0;
 	
-	private BlockingQueue<Task> inQ = new ArrayBlockingQueue<Task>(10);
-	private BlockingQueue<Task> outQ = new ArrayBlockingQueue<Task>(10);
+	private BlockingQueue<Task> inQ = new ArrayBlockingQueue<Task>(100);
+	private BlockingQueue<List<Results>> outQ = new ArrayBlockingQueue<List<Results>>(100);	
 	private Worker worker;
 	private Task task = null;
 	private ShingleWorker shingleWorker;
@@ -37,6 +39,7 @@ public class ServiceHandler extends HttpServlet {
 
 	public ServiceHandler(){
 		super();
+		GlobalQueue.init();
 		worker= new Worker(inQ, outQ);
 		new Thread(worker).start();	
 	}
@@ -47,11 +50,15 @@ public class ServiceHandler extends HttpServlet {
 	 * method will be automatically fired by Tomcat when the web server itself is started.
 	 */
 	public void init() throws ServletException {
-		ServletContext ctx = getServletContext(); //The servlet context is the application itself.
+/*		ServletContext ctx = getServletContext(); //The servlet context is the application itself.
 		
 		//Reads the value from the <context-param> in web.xml. Any application scope variables 
 		//defined in the web.xml can be read in as follows:
-		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 		
+		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 	*/	
+		ServletContext ctx = getServletContext(); //The servlet context is the application itself.
+		Global.setBlockingQueueSize(Integer.parseInt(ctx.getInitParameter("BLOCKING_QUEUE_SIZE")));
+		Global.setShingleSize(Integer.parseInt(ctx.getInitParameter("SHINGLE_SIZE")));
+		Global.setMaxHashes(Integer.parseInt(ctx.getInitParameter("MAX_HASHES")));
 	}
 
 
@@ -91,7 +98,7 @@ public class ServiceHandler extends HttpServlet {
 		}else{
 			RequestDispatcher dispatcher = req.getRequestDispatcher("/poll");
 			dispatcher.forward(req,resp);
-			//Check out-queue for finished job with the given taskNumber
+			//Check out-queue for finished job with the given taskNumber			
 		}
 		
 		//Output some headings at the top of the generated page
@@ -132,7 +139,6 @@ public class ServiceHandler extends HttpServlet {
 		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\", 10000);"); //Refresh every 10 seconds
 		out.print("</script>");
 		
-		
 			
 		/* File Upload: The following few lines read the multipart/form-data from an instance of the
 		 * interface Part that is accessed by Part part = req.getPart("txtDocument"). We can read 
@@ -146,6 +152,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<font color=\"0000ff\">");	
 		
 		// Divide the document into shingles
+		// 1. Create a new Shingle Worker
 		shingleWorker = new ShingleWorker(part, taskNumber);
 		//Get a list of shingles from the process shingle method in the shingleWorker Class
 		listShingles = shingleWorker.processShingle();
@@ -155,13 +162,9 @@ public class ServiceHandler extends HttpServlet {
 		
 		task = new Task(document);
 		
-		try {
-			//Add the Task To The In Queue
-			inQ.put(task);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//inQ.put(task);
+		GlobalQueue.addToInQueue(task);
+
 			
 		out.print("</font>");	
 	}
@@ -169,4 +172,20 @@ public class ServiceHandler extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}
+	
+	public List<Results> checkQueue(String title){
+		List<Results> temp = new ArrayList<Results>();
+		
+		// Retrieves but does not remove the head of the queue
+/*		Query _query = outQ.peek();
+		
+		// Using the Override Equals Method in Query Class we can compare on JobId's
+		if(_query != null && _query.getJobID() == Integer.parseInt(id)){
+			result = outQ.poll().getMessage();
+		}
+		else{
+			result = "No";
+		}*/
+		return temp;		
+	}
 }

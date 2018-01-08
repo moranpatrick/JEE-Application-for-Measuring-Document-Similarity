@@ -20,15 +20,15 @@ import xtea_db4o.XTeaEncryptionStorage;
 
 public class Worker implements Runnable {
 	
-	private BlockingQueue<Task> inQ = new ArrayBlockingQueue<Task>(10);
-	private BlockingQueue<Task> outQ = new ArrayBlockingQueue<Task>(10);	
+	private BlockingQueue<Task> inQ = new ArrayBlockingQueue<Task>(100);
+	private BlockingQueue<List<Results>> outQ = new ArrayBlockingQueue<List<Results>>(100);	
 	private Task task;
-	
 	private List<Document> listDocuments = new ArrayList<Document>();
-	private ObjectContainer db = null;
+	private CalculateJaccard cj;
+	private List<Results> listResults = new ArrayList<Results>();
 	
 	
-	public Worker(BlockingQueue<Task> inQ, BlockingQueue<Task> outQ){
+	public Worker(BlockingQueue<Task> inQ, BlockingQueue<List<Results>> outQ){
 		this.inQ = inQ;
 		this.outQ = outQ;
 	}
@@ -36,6 +36,7 @@ public class Worker implements Runnable {
 	@Override
 	public void run() {
 		while(true){
+			inQ = GlobalQueue.getInQ();
 			task = inQ.poll();
 			
 			if(task != null){			
@@ -44,17 +45,26 @@ public class Worker implements Runnable {
 				DocumentRunner dr;
 				try {
 					dr = new DocumentRunner();
-					dr.addDocumentsToDatabase(task.getDocument());
+					
 					listDocuments = dr.getDocuments();
 					
-					dr.showAllDocuments();
+					//Calculate Jaccard
+					cj = new CalculateJaccard(listDocuments, task.getDocument());
+					listResults = cj.calculateJaccard();
+					
+					//dr.addDocumentsToDatabase(task.getDocument());
+					//Shutdown Down The Database
+					dr.closeDB();
 				} catch (FileNotFoundException e) {
 					
 					e.printStackTrace();
 				} catch (IOException e) {
 					
 					e.printStackTrace();
-				}							
+				}	
+				GlobalQueue.addToOutQueue(listResults);
+				outQ = GlobalQueue.getOutQ();
+				System.out.println("Out Q Size IS: " + outQ.size());
 				
 			}
 			
