@@ -34,9 +34,10 @@ database should be returned and presented to the session user.
 [Top](#contents) 
 
 # Screen Shots<a name = "screen"></a>  
-<img src="Screen2.PNG" style="border: solid 3px" width="600" height="300" >  
-<img src="Screen3.PNG" style="border: solid 3px" width="600" height="300" > 
-<img src="Screen4.PNG" style="border: solid 3px" width="600" height="400" > 
+<img src="Screen2.PNG" style="border: solid 3px" width="600" height="350" >  
+<img src="screen3.PNG" style="border: solid 3px" width="600" height="350" > 
+<img src="Screen4.PNG" style="border: solid 3px" width="600" height="400" >   
+
 [Top](#contents) 
 
 # Technologies<a name = "tech"></a>   
