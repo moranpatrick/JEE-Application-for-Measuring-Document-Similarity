@@ -21,6 +21,11 @@
     <param-name>MAX_HASHES</param-name>
     <param-value>200</param-value>
   </context-param>
+  
+  <context-param>
+    <param-name>FILES_PATH</param-name>
+    <param-value>C:/Users/Patrick/Documents/COLLEGE/ForthYear/AdvancedOO/MainProject-MeasureDocumentSimilarity/DocumentSimilarityProject/textFiles</param-value>
+  </context-param>
 
   <!-- A servlet class must be bound to a name -->
   <servlet>

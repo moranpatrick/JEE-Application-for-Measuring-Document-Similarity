@@ -50,6 +50,7 @@ public class ServiceHandler extends HttpServlet {
 		ServletContext ctx = getServletContext(); 
 		Global.setShingleSize(Integer.parseInt(ctx.getInitParameter("SHINGLE_SIZE")));
 		Global.setMaxHashes(Integer.parseInt(ctx.getInitParameter("MAX_HASHES")));
+		Global.setFilePath(ctx.getInitParameter("FILES_PATH"));
 	}
 
 	/** 

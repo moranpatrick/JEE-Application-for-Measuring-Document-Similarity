@@ -65,7 +65,7 @@ public class DocumentRunner implements Database{
 	private void init() throws FileNotFoundException, IOException{
 		System.out.println("IN INIT()");
 		int i = 0;
-		File dir = new File("C:/Users/Patrick/Documents/COLLEGE/ForthYear/AdvancedOO/MainProject-MeasureDocumentSimilarity/DocumentSimilarityProject/textFiles");
+		File dir = new File(Global.getFilePath());
 		
 		// Loop around the directory where the 3 files are stored
 		for(File f : dir.listFiles()){

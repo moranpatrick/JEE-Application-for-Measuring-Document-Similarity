@@ -82,8 +82,13 @@ Step 2: Open Eclipse and Import the project named JEE-Application-for-Measuring-
 Step 3: Add Tomcat Server To the Project:  
 > 3.1 Go to Window > Preferences > Server > Runtime Envoirnment  
 > 3.2 Click add and select the version of tomcat you downloaded and click next.    
-> 3.4 Browse to where you downloaded Apache Tomcat (Selecting the root directory) Click Finish.  
-> 3.5 Then go to Project > Properties > Java Build Path > Libraries > Add Library > Server Runtime > Apache Tomcat and Finish.  
+> 3.3 Browse to where you downloaded Apache Tomcat (Selecting the root directory) Click Finish.  
+> 3.4 Then go to Project > Properties > Java Build Path > Libraries > Add Library > Server Runtime > Apache Tomcat and Finish.  
+
+Step 4: To Initialise the database with three text files in the textFiles folder you need to set the absoulte path to that directory in the web.xml.  
+> 4.1 Navigate to the textFiles folder in the project repository and copy the file path.  
+> 4.2 Open the web.xml file (WebContent->WEB-INF) and replace the FILES_PATH paramater value with your file path.  
+
 Step 5: Right Click on the project and select run as > Run On Server > Finish.  
 Step 6: The browser in eclipse will open at the following URL: 
 > http://localhost:8080/DocumentSimilarityProject/

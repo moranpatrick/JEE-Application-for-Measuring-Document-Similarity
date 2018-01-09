@@ -10,7 +10,16 @@ public class Global {
 	private static int blockingQueueSize;
 	private static int shingleSize;
 	private static int maxHashes;
+	private static String filePath;
 	
+	public static String getFilePath() {
+		return filePath;
+	}
+
+	public static void setFilePath(String filePath) {
+		Global.filePath = filePath;
+	}
+
 	public static int getBlockingQueueSize() {
 		return blockingQueueSize;
 	}
