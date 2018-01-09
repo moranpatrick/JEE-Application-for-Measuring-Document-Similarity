@@ -5,7 +5,8 @@
 
 ## [Contents](#contents)   
 * [Introduction](#intro)
-* [Project Overview](#overview)  
+* [Project Overview](#overview) 
+* [Screen Shots](#screen) 
 * [Technologies](#tech)
 * [How To Run](#run)
  
@@ -30,6 +31,12 @@ and then stored in the database.
 3. The similarity of the submitted document to the set of documents stored in the
 database should be returned and presented to the session user.
 
+[Top](#contents) 
+
+# Screen Shots<a name = "screen"></a>  
+<img src="Screen2.PNG" style="border: solid 3px" width="600" height="300" >  
+<img src="Screen3.PNG" style="border: solid 3px" width="600" height="300" > 
+<img src="Screen4.PNG" style="border: solid 3px" width="600" height="400" > 
 [Top](#contents) 
 
 # Technologies<a name = "tech"></a>   
